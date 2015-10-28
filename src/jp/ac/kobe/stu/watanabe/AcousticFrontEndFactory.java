@@ -4,7 +4,9 @@ public interface AcousticFrontEndFactory {
 
 	public AcousticFrontEndFactory setFftN(int n);
 	public AcousticFrontEndFactory setMfccCh(int n);
-	//...//
-	public AcousticFrontEndFactory build();
+	public AcousticFrontEndFactory setStepLength(int n);
+	public AcousticFrontEndFactory setWindowType(String w);
+	public AcousticFrontEndFactory setPreemphCof(double n);
+	public AcousticFrontEnd build();
 	
 }

@@ -6,11 +6,17 @@ public class Main {
 
 		int  n = 512;
 		int ch = 26;
+		int step = 10;
+		double preEmph = 0.97;
+		String windowType = "Hunning";
 		
-		AcousticFrontEndFactory factory = new AcousticFrontEndFactoryImp();
+		
+		AcousticFrontEndFactory factory = new AcousticFrontEndFactoryImp(n, ch, windowType, step, preEmph);
 		AcousticFrontEnd fe = factory
-				.setFttN(n)
+				.setFftN(n)
 				.setMfccCh(ch)
+				.setWindowType(windowType)
+				.setPreemphCof(preEmph)
 				.build()
 				;
 		

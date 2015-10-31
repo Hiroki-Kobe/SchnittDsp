@@ -131,7 +131,7 @@ public class AcousticFrontEndRow {
 	}
 
 
-	private int[][] getMfcc(double [][] AmpAray){
+	private int[][] doMfcc(double [][] AmpAray){
 		double fmax = hz / 2;  //Nyquist
 		double melmax = 1127 * Math.log(hz / 700.0 + 1.0); // mel-Nyquist
 		int nmax = FFT_N /2;

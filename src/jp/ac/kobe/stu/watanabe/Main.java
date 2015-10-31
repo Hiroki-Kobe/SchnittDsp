@@ -3,11 +3,9 @@ package jp.ac.kobe.stu.watanabe;
 public class Main {
 
 	public static void main(String[] args) {
-
 		int  n = 512;
 		int ch = 26;
 		int step = 10;
-		double preEmph = 0.97;
 		String windowType = "Hunning";
 		
 		

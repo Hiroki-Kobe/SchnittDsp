@@ -38,12 +38,6 @@ public class AcousticFrontEndFactoryImp implements AcousticFrontEndFactory{
 
 	
 	@Override
-	public AcousticFrontEndFactory setStepLength(int n){
-		this.stepLength = n;
-		return this;
-	}
-	
-	@Override
 	public AcousticFrontEnd build(){
 		return (AcousticFrontEnd) new AcousticFrontEndFactoryImp(this.FFT_N, this.MFCC_CH, this.windowType, this.stepLength);
 	

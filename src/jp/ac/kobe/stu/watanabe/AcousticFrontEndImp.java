@@ -61,7 +61,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 
 	
 	private double [] calcFft(double [] frames){
-		FastFourierTransformer fft = FastFourierTransformer(null);
+		FastFourierTransformer fft = new FastFourierTransformer(null);
 		Complex [] fftAry = new Complex[this.FFT_N];
 		double  [] ampAry = new double[this.FFT_N];
 
@@ -79,7 +79,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
     }
 
 	
-//	INPUT: Amplitude Spectral
+//	INPUT: Amplitude Spectrum
 	private double [] calcMfcc(double [] samples, int hz){
 		double [] ampSamples = samples;
 		double Nyq    =  hz / 2;                                  // Nyquist
@@ -141,29 +141,48 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 				filterBank[c][i] = 1.0 - ((i - indexCenter[i]) * decrement);
 			}
 		}
+
+		//FilteredAmp = Amplitude array that is applied mel-FilterBank from CH1 = MFCC_CH to 
+		double [] [] FilterBankedAmp = new double [MFCC_CH] [ampSamples.length] ;
+		for(int c = 0; c < MFCC_CH; c++){
 		
-//		
-			
-		for(int c= 0; i<MFCC_CH; i++){
-			
-//			FilteredAmp = Amplitude array that is applied mel-FilterBank from CH1 = MFCC_CH to 
-			double [] FilteredAmp = new double [ampSamples.length];
-			for(int i = 0; i<ampSamples.length; i++){
-				FilteredAmp[i] = ampSamples[i] * filterBank[c][i];
-			}
-			
-//			Calculating Sum of temp 
-			double SumOfFilteredAmp [] = new double []
-			for(int j = 0; j<ampSamples; j++){
+			for(int i = 0; i < ampSamples.length; i++){
+				FilterBankedAmp[c][i] = ampSamples[i] * filterBank[c][i];
 				
 			}
-			
-			
-			
 		}
 			
+
+//		Calculating Sum of FilteredAmp
+		double [] MelFilteredSpec = new double [MFCC_CH];
+		double SumTemp = 0.0;
+		for(int c = 0; c < MFCC_CH; c++){
+
+			// Calculating the sum of FilterBanked Amplitude; 				
+		
+			for(int i = 0; i < ampSamples.length; i++){
+				
+				SumTemp += FilterBankedAmp[c][i];
+			}
+				
+				
+			// Logtransfer Sum of FilteredBanked Amplitude			
+		MelFilteredSpec[c] = Math.log10(SumTemp);
+			
+		}
+		
+        FastCosineTransformer fct = new FastCosineTransformer(null);
+		double [] MFCC = fct.transform(MelFilteredSpec, null);
+	
+		return MFCC;
 	}
-						
+
+	
+	
+	
+	
+	
+					
 		
 	
 	@Override

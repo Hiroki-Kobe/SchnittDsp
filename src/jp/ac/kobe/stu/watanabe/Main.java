@@ -3,18 +3,16 @@ package jp.ac.kobe.stu.watanabe;
 public class Main {
 
 	public static void main(String[] args) {
-		int  n = 512;
+		int  fftn = 512;
 		int ch = 26;
-		int step = 10;
 		String windowType = "Hunning";
 		
 		
-		AcousticFrontEndFactory factory = new AcousticFrontEndFactoryImp(n, ch, windowType, step, preEmph);
+		AcousticFrontEndFactory factory = new AcousticFrontEndFactoryImp(fftn, ch, windowType);
 		AcousticFrontEnd fe = factory
-				.setFftN(n)
+				.setFftN(fftn)
 				.setMfccCh(ch)
 				.setWindowType(windowType)
-				.setPreemphCof(preEmph)
 				.build()
 				;
 		

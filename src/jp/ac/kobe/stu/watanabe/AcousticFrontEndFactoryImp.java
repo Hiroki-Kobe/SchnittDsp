@@ -2,17 +2,17 @@ package jp.ac.kobe.stu.watanabe;
 
 public class AcousticFrontEndFactoryImp implements AcousticFrontEndFactory{
 
-	private int FFT_N   = 256;
-	private int MFCC_CH = 26;
-	private int stepLength = 10; /*ms*/
-	private String windowType = "Hunnig";
+	private int FFT_N;
+	private int MFCC_CH;
+	private int stepLength; /*ms*/
+	private String windowType;
 
 
-	public AcousticFrontEndFactoryImp(int fft_n, int mfcc_ch, String w, int s){
-		this.FFT_N = fft_n;
-		this.MFCC_CH = mfcc_ch;
-		this.windowType = w;
-        this.stepLength = s;
+	public AcousticFrontEndFactoryImp(int fft_n, int mfcc_ch, String win, int step){
+		this.FFT_N      = fft_n;
+		this.MFCC_CH    = mfcc_ch;
+		this.windowType = win;
+        this.stepLength = step;
 		
 	}
 
@@ -35,12 +35,17 @@ public class AcousticFrontEndFactoryImp implements AcousticFrontEndFactory{
 		return this;
 
 	}
+	
+	@Override
+	public AcousticFrontEndFactory setStepLength(int s){
+		this.stepLength = s;
+		return this;
+	}
 
 	
 	@Override
 	public AcousticFrontEnd build(){
-		return (AcousticFrontEnd) new AcousticFrontEndFactoryImp(this.FFT_N, this.MFCC_CH, this.windowType, this.stepLength);
+		return new AcousticFrontEndImp(this.FFT_N, this.MFCC_CH, this.windowType, this.stepLength);
 	
 	}
-	
 }

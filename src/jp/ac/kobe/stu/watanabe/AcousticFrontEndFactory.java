@@ -1,10 +1,11 @@
 package jp.ac.kobe.stu.watanabe;
 
-public interface AcousticFrontEndFactory {
+public interface AcousticFrontEndFactory{
 
-	public AcousticFrontEndFactory setFftN(int n);
-	public AcousticFrontEndFactory setMfccCh(int n);
-	public AcousticFrontEndFactory setWindowType(String w);
+	public AcousticFrontEndFactory setFftN(int fft);
+	public AcousticFrontEndFactory setMfccCh(int mfcc);
+	public AcousticFrontEndFactory setWindowType(String wind);
+	public AcousticFrontEndFactory setStepLength(int step);
 	public AcousticFrontEnd build();
 	
 }

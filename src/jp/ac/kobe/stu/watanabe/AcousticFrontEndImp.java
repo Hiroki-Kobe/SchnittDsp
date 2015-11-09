@@ -1,10 +1,11 @@
 package jp.ac.kobe.stu.watanabe;
 
 import org.apache.commons.math3.complex.Complex;
+import org.apache.commons.math3.transform.DctNormalization;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastCosineTransformer;
 import org.apache.commons.math3.transform.FastFourierTransformer;
-import org.jtransforms.fft.DoubleFFT_1D;
+import org.apache.commons.math3.transform.TransformType;
 
 public class AcousticFrontEndImp implements AcousticFrontEnd {
 
@@ -17,10 +18,13 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 	private int    [] samples      = null;
 	private double [] preEmphSamp  = null;
 	private double [] windowedSamp = null;
-	private double [] ampAry       = null;
-	public static final DftNormalization STANDARD = null;
-
-
+	private double [] amplitudeSamples = null;
+	
+	public static final DftNormalization STANDARD = DftNormalization.STANDARD;
+	public static final DctNormalization STANDARD_DCT_I = DctNormalization.STANDARD_DCT_I;
+	public static final TransformType FORWARD = TransformType.FORWARD;
+	
+	
 	public AcousticFrontEndImp(int fftN, int mfccCh,  String win, int step) {
 		this.FFT_N      = fftN;
 		this.MFCC_CH    = mfccCh;
@@ -33,66 +37,70 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 	public void writeSamples(int[] samples) {
 		assert (samples.length == this.FFT_N);
 
-		if (samples.length != FFT_N) {
-			throw new IllegalArgumentException();
-		}
+//		if (samples.length != FFT_N) {
+//			throw new IllegalArgumentException();
+//		}
 		
 		this.samples = samples;
 	}
 
 
 	private double [] doPreEmph(int[] samples) {
-		for (int i=0; i < this.FFT_N; i++) {
-			preEmphSamp[i] = samples[i] - 0.97 * samples[i - 1];
-		}
-
+		double [] coef = {1.0, 0.97};
+		FirFilter fir = new FirFilter(coef);
+		preEmphSamp = fir.doFirFilter(samples);
+		
 		return preEmphSamp;
 	}
 
-	
-//Windowning: No preEmphasized samples
-	private double[] windowFrames(int[] samples) {
-		for (int i=0; i < FFT_N; i++) {
-			windowedSamp[i] = samples[i] * (0.5-0.5 * Math.cos(2 * Math.PI * i /(this.FFT_N-1)));
+		
+// Windowning: INPUT: preEmphasized samples
+	private double[] windowFrames(double[] preEmphSamples) {
+		
+		preEmphSamp  = preEmphSamples;
+		windowedSamp = new double [this.FFT_N];
+
+		// DEBUG
+		assert(samples.length == this.FFT_N);
+
+		if(windowType == "Hunning"){		
+		    for(int i=0; i < FFT_N; i++) {
+			    windowedSamp[i] = this.preEmphSamp[i] * (0.5 - 0.5 * Math.cos(2 * Math.PI * i / (this.FFT_N - 1)));
+			    }
 		}
+		
 		return windowedSamp;
+		
 	}
 
-	
-//Windowning: preEmphasized samples
-	private double[] windowFrames(double[] preEmphSamp) {
-		for(int i=0; i < FFT_N; i++) {
-			windowedSamp[i] = preEmphSamp[i] * (0.5-0.5 * Math.cos(2 * Math.PI * i /(this.FFT_N-1)));
-		}
-		return windowedSamp;
-	}
 
-	
-	
+
 	private double [] calcFft(double [] windowedSamp){
 		FastFourierTransformer fft = new FastFourierTransformer(STANDARD);
 
-		//		DoubleFFT_1D  fft = new DoubleFFT_1D(FFT_N);
 		Complex [] fftAry = new Complex[this.FFT_N];
-		double  [] ampAry = new double[this.FFT_N];
+		amplitudeSamples = new double[this.FFT_N];
 		
     	for(int i=0; i < FFT_N; i++){
-    		fftAry    = fft.transform(windowedSamp, null);
-    		ampAry[i] = Math.sqrt(Math.pow(fftAry[i].getReal(), 2) + Math.pow(fftAry[i].getImaginary(), 2));
+    		fftAry = fft.transform(windowedSamp, FORWARD);
+    	
+    		// Calculating Amplitude
+    		amplitudeSamples[i] = Math.sqrt(Math.pow(fftAry[i].getReal(), 2) + Math.pow(fftAry[i].getImaginary(), 2));
     	}
     	
-    	return ampAry;
+    	return amplitudeSamples;
     }
 
-	
-//	INPUT: Amplitude Spectrum
+
+    //	INPUT: Amplitude Spectrum
 	private double [] doMfcc(double [] AmpSamples, int hz){
 		double [] ampSamples = AmpSamples;
 
-		MelFilterBank melFilter = new MelFilterBank(AmpSamples, FFT_N, hz, MFCC_CH);
-		double [][] filterBank = melFilter.calcMelFilterBank();
+		MelFilterBank melFilter = new MelFilterBank(FFT_N, hz, MFCC_CH);
+		double [][] filterBank = melFilter.calcMelFilterBank(AmpSamples);
 
 		
+//		Until Here: checking (including MelFilterBank)!! I have to do debug the rest of parts
 		//FilteredAmp = Amplitude array that is applied mel-FilterBank from CH1 = MFCC_CH to 
 		double [] [] FilterBankedAmp = new double [MFCC_CH] [ampSamples.length] ;
 		for(int c = 0; c < MFCC_CH; c++){
@@ -122,18 +130,19 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 			
 		}
 		
-        FastCosineTransformer fct = new FastCosineTransformer(null);
+        FastCosineTransformer fct = new FastCosineTransformer(STANDARD_DCT_I);
 		double [] MFCC = fct.transform(MelFilteredSpec, null);
 	
 		return MFCC;
 	}
 	
+	
 	@Override
 	public double [] readFeatures() {
 		double [] preAmp = doPreEmph(samples);
 		double [] windowedSamp = windowFrames(preAmp);
-		double [] fftAry = calcFft(windowedSamp);
+		features = calcFft(windowedSamp);
 
-		return fftAry;
+		return features;
 	}
 }

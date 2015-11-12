@@ -141,8 +141,10 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 	public double [] readFeatures() {
 		double [] preAmp = doPreEmph(samples);
 		double [] windowedSamp = windowFrames(preAmp);
+		
 		features = calcFft(windowedSamp);
 
-		return features;
+		return preAmp;
+//		return features;
 	}
 }

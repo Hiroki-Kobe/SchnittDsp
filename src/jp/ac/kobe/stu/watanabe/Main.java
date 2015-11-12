@@ -1,8 +1,7 @@
 package jp.ac.kobe.stu.watanabe;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
-
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import info.pinlab.pinsound.WavClip;
 
@@ -23,21 +22,18 @@ public class Main {
 				.build()
 				;
 
-		WavClip wav = new WavClip("/home/pon_chan/workspace/SchnittDsp/res/test.wav") ;
+		WavClip wav = new WavClip("/home/snoopy/workspace/SchnittDsp/res/test.wav") ;
 
 //		Pudding 0 to Set Length of Samples to Multiple of FFT_N
 		int [] rowSamples = wav.toIntArray();
-		int pudding = fftn - (rowSamples.length % fftn);
 
-		System.out.println("pudding: " + pudding);
+		System.out.println(Arrays.toString(rowSamples));
+		System.out.println();
+		int pudding = fftn - (rowSamples.length % fftn);
 		int [] samples = new int [rowSamples.length + pudding];
 		Arrays.fill(samples, 0);
 
 		assert(samples.length % fftn==0);
-		
-		System.out.println(samples);
-		System.out.println("pudded samples: " +  samples.length);
-		System.out.println("RowSamples: " + rowSamples.length);
 		
 		
 		int offset = 0;
@@ -53,8 +49,11 @@ public class Main {
 			fe.writeSamples(samples);
 
 		    double [] features = fe.readFeatures();
-			
-		    System.out.println(features);
+
+		    for(int i =0; i<features.length; i++){
+			    System.out.println(features[i]);		    	
+		    }
+
 		    offset += stepLength;
 		}
 	}	

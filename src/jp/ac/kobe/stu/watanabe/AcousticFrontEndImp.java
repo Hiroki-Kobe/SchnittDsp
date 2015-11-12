@@ -46,7 +46,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 
 
 	private double [] doPreEmph(int[] samples) {
-		double [] coef = {1.0, 0.97};
+		double [] coef = {1.0, -0.97};
 		FirFilter fir = new FirFilter(coef);
 		preEmphSamp = fir.doFirFilter(samples);
 		

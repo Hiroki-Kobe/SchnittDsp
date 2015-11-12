@@ -1,8 +1,5 @@
 package jp.ac.kobe.stu.watanabe;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-
 import info.pinlab.pinsound.WavClip;
 
 public class Main {
@@ -24,38 +21,32 @@ public class Main {
 
 		WavClip wav = new WavClip("/home/snoopy/workspace/SchnittDsp/res/test.wav") ;
 
-//		Pudding 0 to Set Length of Samples to Multiple of FFT_N
 		int [] rowSamples = wav.toIntArray();
-
-		System.out.println(Arrays.toString(rowSamples));
-		System.out.println();
-		int pudding = fftn - (rowSamples.length % fftn);
-		int [] samples = new int [rowSamples.length + pudding];
-		Arrays.fill(samples, 0);
-
-		assert(samples.length % fftn==0);
-		
 		
 		int offset = 0;
-		int [] featureSamples = new int [fftn];
+		int [] temp = new int[fftn];
 		
+		fe.writeSamples(rowSamples);
 
-		
-		for(int val: samples){
 
-			System.arraycopy(samples, offset, featureSamples, 0, fftn);
-			assert(featureSamples.length == fftn);
+		for(int i = 0; i<rowSamples.length;i++){
 
-			fe.writeSamples(samples);
+			System.arraycopy(rowSamples, offset, temp, 0, fftn-1);
+			assert(temp.length == fftn);
+			
+			fe.writeSamples(temp);
 
 		    double [] features = fe.readFeatures();
 
-		    for(int i =0; i<features.length; i++){
-			    System.out.println(features[i]);		    	
+
+		    // Test
+		    for(int j =0; j<features.length; j++){
+			    System.out.println(features[j]);		    	
 		    }
 
 		    offset += stepLength;
+		    temp = null;
+
 		}
 	}	
 }
-

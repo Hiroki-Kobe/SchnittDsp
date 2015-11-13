@@ -1,9 +1,5 @@
 #! coding:utf_8
-##########
-# retutn interger array of wave file
-# INPUT: [1] wav file
-# OUTPUT: preemphasized data file (int) 
-##########
+
 import wave
 import numpy as np
 import sys
@@ -20,15 +16,16 @@ def wav_read(filename):
     return data
 
 
-# [1] snd 
+# [1] snd,[2] filename for ouput: interger of data 
 argvs = sys.argv
 
 filename = argvs[1]
 output = filename[:-4] + "_int.txt"
-
-filename = "./snd/" + filename
+	
 print "[INFO] Filename: " + filename
 print "[INFO] Output: " + output
+
+assert filename=="test.wav", "filename error"
 
 
 data = wav_read(filename)

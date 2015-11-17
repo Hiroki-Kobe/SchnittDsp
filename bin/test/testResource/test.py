@@ -44,17 +44,15 @@ print window_type
 
 ### Integer
 int_samples = dsp.do_wav2int()
-print "[int_samples]", int_samples
-print "length", len(int_samples)
-
-
 # print "[Int]: ", int_samples
 
 ### Preemph
 preemphed_samples = dsp.do_preemph(int_samples)
+# print "[Preemphed]: ", preemphed_samples
 
 ### Windowning
 windowed_samples = dsp.do_windowning(preemphed_samples[:FFTN])
+# print "[Windowed samples]: ", windowed_samples
 
 ### FFT
 fft_spec = dsp.do_fft(windowed_samples[:FFTN], plotting=False, saving=False)
@@ -70,21 +68,20 @@ mfcc = dsp.mel_filterbank(CH, windowed_samples)
 #################
 #  write the values to text files
 #################
-
-## Integer
+### Integer
 int_samples_file = "int_samples.txt" 
 f = open(int_samples_file, "w")
-for i in range(0, len(int_samples)):
-    value = str(int_samples[i]) + "\n"
+for i in int_samples:
+    value = str(int_samples[i])  + "\n" 
     f.write(value)
 
-#f.close()
+f.close()
 
 ### Preemphed samples
 preemphed_samples_file = "preemph_samples.txt"
 f = open(preemphed_samples_file, "w")
-for i in range(0, len(preemphed_samples)):
-    value = str(preemphed_samples[i])  + "\n"
+for i in preemphed_samples:
+    value = str(preemphed_samples[i]) + "\n"
     f.write(value)
 
 f.close()

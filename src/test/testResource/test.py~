@@ -52,9 +52,11 @@ print "length", len(int_samples)
 
 ### Preemph
 preemphed_samples = dsp.do_preemph(int_samples)
+# print "[Preemphed]: ", preemphed_samples
 
 ### Windowning
 windowed_samples = dsp.do_windowning(preemphed_samples[:FFTN])
+# print "[Windowed samples]: ", windowed_samples
 
 ### FFT
 fft_spec = dsp.do_fft(windowed_samples[:FFTN], plotting=False, saving=False)

@@ -30,14 +30,12 @@ public class Main {
 
 
 		for(int i = 0; i<rowSamples.length;i++){
-
 			System.arraycopy(rowSamples, offset, temp, 0, fftn-1);
 			assert(temp.length == fftn);
 			
 			fe.writeSamples(temp);
 
 		    double [] features = fe.readFeatures();
-
 
 		    // Test
 		    for(int j =0; j<features.length; j++){

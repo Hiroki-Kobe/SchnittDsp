@@ -143,7 +143,8 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		double [] windowedSamp = windowFrames(preAmp);
 		
 		features = calcFft(windowedSamp);
+		
+		return windowedSamp;
 
-		return features;
 		}
 }

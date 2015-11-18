@@ -19,7 +19,7 @@ public class Main {
 				.build()
 				;
 
-		WavClip wav = new WavClip("/home/snoopy/workspace/SchnittDsp/res/test.wav") ;
+		WavClip wav = new WavClip("/home/pon_chan/workspace/SchnittDsp/res/test.wav") ;
 
 		int [] rowSamples = wav.toIntArray();
 		
@@ -35,11 +35,11 @@ public class Main {
 			
 			fe.writeSamples(temp);
 
-		    double [] features = fe.readFeatures();
+		    double [] fftAry = fe.readFft();
 
 		    // Test
-		    for(int j =0; j<features.length; j++){
-			    System.out.println(features[j]);		    	
+		    for(int j =0; j<fftAry.length; j++){
+			    System.out.println(fftAry[j]);		    	
 		    }
 
 		    offset += stepLength;

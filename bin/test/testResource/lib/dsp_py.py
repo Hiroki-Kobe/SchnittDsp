@@ -47,39 +47,29 @@ class Dsp:
         if os.path.exists(filename):
             self.filename = filename
         else: print ("No file exists")
-        
                
         return self
-
 
     ### Set fftN
     def set_fftn(self, fftn=512):
         if fftn > 0 and (fftn & (fftn - 1)) == 0:
             self.fftn = fftn
-            print "[INFO] fftN: ", self.fftn
-           
-
         else: print "[ERROR]: fftn has to be the power of 2"
 
         return self
 
 
-
     ### Set Preemph coef
     def set_preemph_coef(self, preemph_coef=0.97):
         self.preemph_coef = preemph_coef
-        print "[INFO] preemph coef: ",  self.preemph_coef
 
         return self
-
 
     
     ### Set windowtype: Hanning or Hamming
     def set_windowtype(self, windowtype="Hanning"):
         if windowtype == "Hanning" or windowtype == "Hamming":
             self.windowtype = windowtype
-            print self.windowtype
-        
         else: 
             print("[ERROR] window type = Hamming or Hanning")
 
@@ -89,12 +79,10 @@ class Dsp:
     def set_mfcc_ch(self, ch=20):
         if isinstance(ch, int): 
             self.mfcc_ch = ch
-            return self
-            
-
         else:
             raise Exception("Mfcc ch has to be integer")
-
+        
+        return self
 
 
     ### Get parameter
@@ -111,7 +99,6 @@ class Dsp:
         return self.windowtype
 
 
-
     ### Method fotr DSP
     def do_wav2int(self, plotting=False, saving=False):
         try:
@@ -120,9 +107,6 @@ class Dsp:
 
             self.samples = self.wf.readframes(self.wf.getnframes())
             self.samples = np.frombuffer(self.samples, dtype="int16")
-         
-            print "filename: ", self.filename
-            print "finish setting Integer samples"
 
         except IOError:
             print "Cannot read the file!"
@@ -145,25 +129,9 @@ class Dsp:
         return self.samples
 
 
-
     def do_preemph(self, signal):
         self.signal = signal
         return scipy.signal.lfilter([1.0, -self.preemph_coef], 1, self.signal)
-
-
-
-    def do_preemph2(self, signal):
-        self.signal = signal
-        self.preemph_coef_list = [1.0, -self.preemph_coef]
-        self.preemphed_samples = [0.0] * len(self.signal)
-
-        for n in range(0, len(self.signal)):
-            for i in range(0, len(self.preemph_coef_list)):
-                if n - i >= 0:
-                    self.preemphed_samples[n] += self.preemph_coef_list[i] * self.signal[n-i]
-
-        return self.preemphed_samples
-
 
 
     def do_windowning(self, signal):
@@ -197,7 +165,6 @@ class Dsp:
                 if(saving):
                     save_filename = self.filename[:-4] + "_spec" + ".png"
                     savefig(save_filename)
-
 
                 show()
 

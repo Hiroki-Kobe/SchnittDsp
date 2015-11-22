@@ -65,7 +65,6 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		}
 		
 		return windowedSamp;
-		
 	}
 
 
@@ -96,12 +95,11 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 
 		
 		//FilteredAmp = Amplitude array that is applied mel-FilterBank from CH1 = MFCC_CH to 
-		double [] [] FilterBankedAmp = new double [MFCC_CH] [ampSamples.length] ;
+		double [] [] FilterBankedAmp = new double [MFCC_CH][ampSamples.length] ;
 		for(int c = 0; c < MFCC_CH; c++){
 		
 			for(int i = 0; i < ampSamples.length; i++){
 				FilterBankedAmp[c][i] = ampSamples[i] * filterBank[c][i];
-				
 			}
 		}
 			
@@ -110,9 +108,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		double [] MelFilteredSpec = new double [MFCC_CH];
 		double SumTemp = 0.0;
 		for(int c = 0; c < MFCC_CH; c++){
-
 			// Calculating the sum of FilterBanked Amplitude; 				
-		
 			for(int i = 0; i < ampSamples.length; i++){
 				
 				SumTemp += FilterBankedAmp[c][i];
@@ -148,5 +144,5 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		double [] mfccAry = doMfcc(fftAry);
 		
 		return mfccAry;
-	}
+	}	
 }

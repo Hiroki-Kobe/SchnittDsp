@@ -17,8 +17,7 @@ public class MelFilterBank {
 	public MelFilterBank(int fft_n, int hz, int mfcc_ch) {
 		this.HZ         = hz;
 		this.MFCC_CH    = mfcc_ch;
-		this.FFT_N      = fft_n;
-		
+		this.FFT_N      = fft_n;		
 	}
 	
 	
@@ -80,12 +79,12 @@ public class MelFilterBank {
 		double incrementRange = (indexCenter[c] + 1) - indexStart[c];
 		
 		double incrementPoint = indexStart[c];
-		
+
 		for(int i=0; i<incrementRange; i++){
 	
 			filterBank[c][i] = (incrementPoint - indexStart[c]) * increment;
 			incrementPoint   = incrementPoint + df;
-		
+
 		}
 		
 		double decrement = 1.0 / (indexStop[c] - indexCenter[c]); 
@@ -95,7 +94,7 @@ public class MelFilterBank {
 				
 		for(int i=0; i<decrementRange; i++){
 	
-			filterBank[c][i] = 1.0 - ((i - indexCenter[i]) * decrement);
+			filterBank[c][i] = 1.0 - ((i - indexCenter[c]) * decrement);
 			decrementPoint = decrementPoint + df;
 		}
 	}

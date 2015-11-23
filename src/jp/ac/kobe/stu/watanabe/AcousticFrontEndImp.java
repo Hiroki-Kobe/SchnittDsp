@@ -91,8 +91,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		double [] ampSamples = AmpSamples;
 
 		MelFilterBank melFilter = new MelFilterBank(FFT_N, HZ, MFCC_CH);
-		double [][] filterBank = melFilter.calcMelFilterBank(AmpSamples);
-
+		double [][] filterBank = melFilter.calcMelFilterBank(AmpSamples);	
 		
 		//FilteredAmp = Amplitude array that is applied mel-FilterBank from CH1 = MFCC_CH to 
 		double [] [] FilterBankedAmp = new double [MFCC_CH][ampSamples.length] ;
@@ -116,10 +115,9 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 				
 				
 			// Log-transfer Sum of FilteredBanked Amplitude			
-		MelFilteredSpec[c] = Math.log10(SumTemp);
-			
+			MelFilteredSpec[c] = Math.log10(SumTemp);
 		}
-		
+
         FastCosineTransformer fct = new FastCosineTransformer(STANDARD_DCT_I);
 		double [] mfccAry = fct.transform(MelFilteredSpec, null);
 	
@@ -142,7 +140,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		double [] windowedSamp = windowFrames(preAmp);
 		double [] fftAry = doFft(windowedSamp);
 		double [] mfccAry = doMfcc(fftAry);
-		
+				
 		return mfccAry;
 	}	
 }

@@ -5,17 +5,17 @@ import java.util.Arrays;
 
 import info.pinlab.pinsound.WavClip;
 
-public class Main {
+public class Main{
 
 	public static void main(String[] args) throws Exception{
-		String cwd;
-		String wavName = "res/test.wav";
-		String wavFile;
+		final  String cwd;
+		final  String wavName = "res/test.wav";
+		final String wavFile;
 		
-		int  fftn = 512;
-		int  ch   = 26;
-		String windowType = "Hunning";
-		int stepLength = 10; /*10m*/
+		final int  fftn = 512;
+		final int  ch   = 26;
+		final String windowType = "Hunning";
+		final int stepLength = 10; /*10m*/
 		
 		cwd = System.getProperty("user.dir");
 		wavFile = new File(cwd, wavName).getPath();
@@ -51,12 +51,10 @@ public class Main {
 
 		    // Test
 		    for(int j =0; j<fftAry.length; j++){
-			    System.out.println(fftAry[j]);		    	
-		
+			    System.out.println(fftAry[j]);
 		    }
 
 		    offset += stepLength;
-
 		}
 
 		System.out.println("Finish FFT");
@@ -71,11 +69,11 @@ public class Main {
 		    // Test
 		    for(int j =0; j<mfccAry.length; j++){
 			    System.out.println(mfccAry[j]);		    	
-		
 		    }
 
 		    offset += stepLength;
 
 		}
-	}	
+	
+	}
 }

@@ -147,9 +147,7 @@ public class FftSampleTest {
 			
 		}catch(FileNotFoundException e){
 			System.out.println("IOE ERROR");
-		}
-			
-			
+		}			
 	}
 	
 	@Before

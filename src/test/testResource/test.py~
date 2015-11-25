@@ -52,14 +52,15 @@ int_samples = dsp.do_wav2int()
 preemphed_samples = dsp.do_preemph(int_samples[:FFTN])
 ### Windowning
 windowed_samples = dsp.do_windowning(preemphed_samples)
+print len(windowed_samples)
 
 ### FFT
 fft_spec = dsp.do_fft(windowed_samples, plotting=False, saving=False)
+print fft_spec
 
 ### MFCC
 mfcc = dsp.do_mfcc(fft_spec)
-print "sum banked amp: ", mfcc
-
+print mfcc
 plot(range(0, 12), mfcc[:12])
 savefig("mfcc_dsp.png")
 

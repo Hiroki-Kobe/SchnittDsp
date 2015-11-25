@@ -36,44 +36,33 @@ public class Main{
 		int[] intSamples = new int [sampleLength];				
 		Arrays.fill(intSamples, 0);
 		System.arraycopy(rowSamples, 0, intSamples, 0, rowSamples.length);
-
 		
 		int offset = 0;
 		int [] temp = new int[fftn];
 		int windowNum = (intSamples.length - fftn)/ stepLength;
 		
-		for(int i = 0; i< windowNum; i++){
+	    System.out.println("-----------start");		   
+		for(int i = 0; i< 1; i++){
 			System.arraycopy(intSamples, offset, temp, 0, fftn-1);
 			assert(temp.length == fftn);
 			fe.writeSamples(temp);
 
 		    double [] fftAry = fe.readFft();
+		    double [] mfcc = fe.readMfcc();
 
 		    // Test
 		    for(int j =0; j<fftAry.length; j++){
-			    System.out.println(fftAry[j]);
+			    System.out.println("FFT: " + fftAry[j]);
 		    }
 
+
+		    for(int j =0; j<mfcc.length; j++){
+		    System.out.println("MFCC: " + mfcc[j]);		    	
+		    }
+		    
 		    offset += stepLength;
 		}
 
-		System.out.println("Finish FFT");
-		
-		for(int i = 0; i< windowNum; i++){
-			System.arraycopy(intSamples, offset, temp, 0, fftn-1);
-			assert(temp.length == fftn);
-			fe.writeSamples(temp);
-
-		    double [] mfccAry = fe.readMfcc();
-
-		    // Test
-		    for(int j =0; j<mfccAry.length; j++){
-			    System.out.println(mfccAry[j]);		    	
-		    }
-
-		    offset += stepLength;
-
-		}
-	
+		System.out.println("Finish FFT + MFCC");
 	}
 }

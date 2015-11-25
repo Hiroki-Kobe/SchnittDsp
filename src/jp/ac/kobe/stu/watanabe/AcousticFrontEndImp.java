@@ -85,7 +85,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		double [] ampSamples = AmpSamples;
 
 		MelFilterBank melFilter = new MelFilterBank(FFT_N, HZ, MFCC_CH);
-		double [][] filterBank = melFilter.calcMelFilterBank(ampSamples);	
+		double [][] filterBank = melFilter.calcMelFilterBank();	
 		
 		// FilteredAmp = Amplitude array that is applied mel-FilterBank from CH1 = MFCC_CH to 
 		double [] [] FilterBankedAmp = new double [MFCC_CH][FFT_N/2] ;

@@ -27,7 +27,7 @@ public class FftSampleTest {
 
 //	For Int_Tests
 	static String intFile = "src/test/testResource/int_samples.txt";
-	static ArrayList<Integer> IntExpectedAry;
+	static ArrayList<Integer> intExpectedAry;
 	static int [] intTestSamples;
 
 //  For Preemphed Samples
@@ -61,11 +61,11 @@ public class FftSampleTest {
 			String fileName = new File(currentPath, intFile).getPath();
 			br = new BufferedReader(new FileReader(fileName));
 			
-			IntExpectedAry = new ArrayList<Integer>(); 
+			intExpectedAry = new ArrayList<Integer>(); 
 			String value = br.readLine();
 			while(value != null){
 				int intValue = Integer.parseInt(value);
-				IntExpectedAry.add(intValue);
+				intExpectedAry.add(intValue);
 				
 				value = br.readLine();								
 			}
@@ -171,11 +171,11 @@ public class FftSampleTest {
 	@Test
 	public void testIntegerSamples() throws IOException {
 		// Check size;
-		assertEquals(IntExpectedAry.size(), intTestSamples.length);
+		assertEquals(intExpectedAry.size(), intTestSamples.length);
 
 		// Check integers
 		for(int i = 0; i<intTestSamples.length; i++){
-			int expected = IntExpectedAry.get(i);
+			int expected = intExpectedAry.get(i);
 			int obs = intTestSamples[i];
 
 			assertEquals("different Integer", expected, obs);

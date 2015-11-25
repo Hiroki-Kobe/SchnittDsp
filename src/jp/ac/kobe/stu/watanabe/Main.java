@@ -41,8 +41,10 @@ public class Main{
 		int [] temp = new int[fftn];
 		int windowNum = (intSamples.length - fftn)/ stepLength;
 		
+		
+		assert(offset==12);
 	    System.out.println("-----------start");		   
-		for(int i = 0; i< 1; i++){
+		for(int i = 0; i< intSamples.length; i++){
 			System.arraycopy(intSamples, offset, temp, 0, fftn-1);
 			assert(temp.length == fftn);
 			fe.writeSamples(temp);

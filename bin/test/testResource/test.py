@@ -2,7 +2,7 @@
 
 import lib.dsp_py as dsp_py
 import sys
-
+from pylab import *
 
 ##########################
 # Input: wav file name for processing
@@ -21,6 +21,7 @@ PREEMPH_COEF = 0.97
 CH           = 20
 
 
+
 #########################
 # Set parmeters
 #########################
@@ -37,13 +38,8 @@ dsp.set_filename(filename)             \
 #  Check the parameters
 #########################
 fftn = dsp.get_fftn()
-print fftn
-
 coef = dsp.get_preemph_coef()
-print coef
-
 window_type = dsp.get_windowtype()
-print window_type
 
 
 ##################
@@ -53,18 +49,21 @@ print window_type
 int_samples = dsp.do_wav2int()
 
 ### Preemph
-preemphed_samples = dsp.do_preemph(int_samples)
-
+preemphed_samples = dsp.do_preemph(int_samples[:FFTN])
 ### Windowning
-windowed_samples = dsp.do_windowning(preemphed_samples[:FFTN])
+windowed_samples = dsp.do_windowning(preemphed_samples)
 
 ### FFT
-fft_spec = dsp.do_fft(windowed_samples[:FFTN], plotting=False, saving=False)
+fft_spec = dsp.do_fft(windowed_samples, plotting=False, saving=False)
 
 ### MFCC
-mfcc = dsp.mel_filterbank(CH, windowed_samples)
+mfcc = dsp.do_mfcc(fft_spec)
+print "sum banked amp: ", mfcc
 
+plot(range(0, 12), mfcc[:12])
+savefig("mfcc_dsp.png")
 
+show()
 
 #################
 #  write the values to text files
@@ -106,3 +105,14 @@ for i in range(0, FFTN/2):
     f.write(value)
 
 f.close()
+
+### mfcc
+#mfcc_samples_file  = "mfcc_samples.txt"
+#f = open(mfcc_samples_file, "w")
+#
+#for i in range(0, len(mfcc)):
+#    value = str(mfcc[i]) + "\n"
+#    f.write(value)
+#
+# f.close()
+

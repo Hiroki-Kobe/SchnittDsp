@@ -81,37 +81,27 @@ class Dsp:
             self.mfcc_ch = ch
         else:
             raise Exception("Mfcc ch has to be integer")
-        
         return self
 
 
     ### Get parameter
     def get_filename(self):
         return self.filename
-
     def get_fftn(self):
         return self.fftn
-
     def get_preemph_coef(self):
         return self.preemph_coef
-
     def get_windowtype(self):
         return self.windowtype
-
-
     ### Method fotr DSP
     def do_wav2int(self, plotting=False, saving=False):
         try:
             self.wf = wave.open(self.filename, "r")
             self.hz = self.wf.getframerate()
-
             self.samples = self.wf.readframes(self.wf.getnframes())
             self.samples = np.frombuffer(self.samples, dtype="int16")
-
         except IOError:
             print "Cannot read the file!"
-
-
         if(plotting):
             self.t = np.arange(0.0, len(self.samples)/ float(self.hz), 1/float(self.hz))
 
@@ -119,45 +109,35 @@ class Dsp:
             xlabel("time[ms]")
             ylabel("amplitude")
 
-   
             if(saving):
                 self.save_filename = self.filename[:-4] + "_waveform" + ".png"
-                savefig(self.save_filename)
-          
+                savefig(self.save_filename)          
             show()
-
         return self.samples
-
 
     def do_preemph(self, signal):
         self.signal = signal
         return scipy.signal.lfilter([1.0, -self.preemph_coef], 1, self.signal)
 
-
-    def do_windowning(self, signal):
+    def do_windowning(self, preemphedSamples):
         try:
-            self.signal = signal
-
+            self.signal = preemphedSamples
             if  self.windowtype  == "Hamming":
                 self.window = np.hamming(self.fftn)
             elif self.windowtype == "Hanning":
                 self.window = np.hanning(self.fftn)
-
             return self.signal * self.window
-
         except:
             print "The length of signal have to match the fftN"
 
-
-    def do_fft(self, signal, plotting=False, saving=False):
-        if len(signal) == self.fftn:
-            self.signal = signal
+    def do_fft(self, windowedSamples, plotting=False, saving=False):
+        if len(windowedSamples) == self.fftn:
+            self.signal = windowedSamples
             self.nyq = self.fftn/2
-
-            self.mag_spec = np.abs(np.fft.fft(self.signal, self.fftn))[:self.nyq]
+#            self.mag_spec = np.abs(np.fft.fft(self.signal, self.fftn))[:self.nyq]
+            self.complex_spec = np.fft.fft(self.signal, self.fftn)[:self.nyq]
+            self.spec = np.abs(self.complex_spec)
             self.freq_scale = np.fft.fftfreq(self.fftn, d=1.0/self.hz)[:self.nyq]
-
-           
             if(plotting):
                 plot(self.freq_scale, self.mag_spec)
                 xlabel("frequency [Hz]")
@@ -165,22 +145,19 @@ class Dsp:
                 if(saving):
                     save_filename = self.filename[:-4] + "_spec" + ".png"
                     savefig(save_filename)
-
                 show()
 
-            return self.mag_spec
-
         else:
-            print "[ERROR]: the length of signal has to mathch the fftn"
+            print "[ERROR]: the length of signal has to mathch the fftn--HERE"
+        
+        return self.spec
 
-    def mel_filterbank(self, signal, plotting = False):
-        self.signal = signal
+    def do_mfcc(self, ampArray):
+        self.signal = ampArray
         self.fmax = self.hz / 2
         self.melmax = 1127.01048 * np.log(self.fmax / 700 + 1)
-
         self.nmax = self.fftn/ 2
         self.df = self.hz / self.fftn
-
         self.dmel = self.melmax / (self.mfcc_ch + 1)
         self.melcenters = np.arange(1, self.mfcc_ch + 1) * self.dmel
 
@@ -203,23 +180,9 @@ class Dsp:
             for i in np.arange(self.indexcenter[c], self.indexstop[c]):
                 self.filterbank[c, i] = 1.0 - ((i - self.indexcenter[c]) * self.decrement)
 
-
-        for c in np.arange(0, self.mfcc_ch):
-            plot(np.arange(0, self.fftn/2) * self.df, self.filterbank[c])
-        show()
-
-        self.mspec = []
-        for c in np.arange(0, self.mfcc_ch):
-            self.mspec.append(np.log10(sum(self.signal * self.filterbank[c])))
-        self.mspec = np.array(self.mspec)
-
-
-        plot(self.fcenters, self.mspec, "o-")
-        xlabel("frequency")
-        xlim(0, 8000)
-        show()
-
-        self.ceps = scipy.fftpack.realtransforms.dct(self.mspec, type=2, norm="ortho", axis=-1)
-
-        return self.ceps[:12]
+#        self.mspec = np.log10(np.dot(self.signal, self.filterbank.T))
+        self.mspec = np.dot(self.signal, self.filterbank.T)
+        return self.mspec
+#        self.ceps = scipy.fftpack.realtransforms.dct(self.mspec, type=2, norm="ortho", axis=-1)
+#        return self.ceps[:12]
 

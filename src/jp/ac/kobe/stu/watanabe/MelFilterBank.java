@@ -14,14 +14,28 @@ public class MelFilterBank {
 	private double df;              // Frequency Resolution
 	private double dmel;            // Interval of center of FilterBank in MelScale
 	
+	
+	/**
+	 * 
+	 * @param fft_n  point fft
+	 * @param fs   sampling rate (frame/sec) in Hz
+	 * @param mfcc_ch 
+	 */
 	public MelFilterBank(int fft_n, int fs, int mfcc_ch) {
 		this.FS         = fs;
 		this.MFCC_CH    = mfcc_ch;
 		this.FFT_N      = fft_n;		
 	}
 	
-	public double [][] calcMelFilterBank(double [] samples){
-		this.ampSamples = samples;
+	
+	/**
+	 * Calculates Mel Filter bank.
+	 * 
+	 * @param samples 
+	 * @return
+	 */
+	public double [][] calcMelFilterBank(){
+//		this.ampSamples = samples;
 		this.fmax   =  FS / 2;                                  // Nyquist
 		this.melMax =  1127.01048 * Math.log(fmax / 700.0 + 1.0); // Mel-Nyquist
 		this.nmax   =  FFT_N /2;                                // Maximum Number of Frequency Index

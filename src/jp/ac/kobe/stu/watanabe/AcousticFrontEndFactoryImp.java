@@ -5,14 +5,16 @@ public class AcousticFrontEndFactoryImp implements AcousticFrontEndFactory{
 	private int FFT_N;
 	private int MFCC_CH;
 	private int stepLength; /*ms*/
+	private int HZ;
 	private String windowType;
 
 
-	public AcousticFrontEndFactoryImp(int fft_n, int mfcc_ch, String win, int step){
+	public AcousticFrontEndFactoryImp(int fft_n, int mfcc_ch, String win, int step, int hz){
 		this.FFT_N      = fft_n;
 		this.MFCC_CH    = mfcc_ch;
 		this.windowType = win;
         this.stepLength = step;
+        this.HZ         = hz;
 	}
 
 	
@@ -41,9 +43,14 @@ public class AcousticFrontEndFactoryImp implements AcousticFrontEndFactory{
 		return this;
 	}
 
+	@Override
+	public AcousticFrontEndFactory setHz(int hz){
+		this.HZ = hz;
+		return this;
+	}
 	
 	@Override
 	public AcousticFrontEnd build(){
-		return new AcousticFrontEndImp(this.FFT_N, this.MFCC_CH, this.windowType, this.stepLength);
+		return new AcousticFrontEndImp(this.FFT_N, this.MFCC_CH, this.windowType, this.stepLength, this.HZ);
 	}
 }

@@ -17,18 +17,18 @@ public class Dct {
 	}
 	
 	public double [] transform(double [] data){
-		double [] dctAry = new double [N];
+		double [] dctArR = new double [N];
 		
 		for(int i = 0; i<N; i++){
-			double SumOf = 0;
+			double sumOf = 0;
 			for(int j = 0; j<N; j++){
 				double value = D[i][j] * data[j];
-				SumOf += value;
+				sumOf += value;
 			}
 			
-			dctAry[i] = SumOf;
+			dctArR[i] = sumOf;
 		}
 		
-		return dctAry;
+		return dctArR;
 	}
 }

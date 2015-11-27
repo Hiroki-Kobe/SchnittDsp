@@ -6,6 +6,7 @@ public interface AcousticFrontEndFactory{
 	public AcousticFrontEndFactory setMfccCh(int mfcc);
 	public AcousticFrontEndFactory setWindowType(String wind);
 	public AcousticFrontEndFactory setStepLength(int step);
+	public AcousticFrontEndFactory setHz(int hz);
 	public AcousticFrontEnd build();
 	
 }

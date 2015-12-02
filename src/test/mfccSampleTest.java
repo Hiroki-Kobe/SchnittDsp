@@ -38,6 +38,7 @@ public class mfccSampleTest {
 	static int ch   = 26;
 	static String windowType = "Hunning";
 	static int stepLength = 10;
+	static int hz = 16000;
 	
 	
 	@BeforeClass
@@ -63,7 +64,7 @@ public class mfccSampleTest {
 	
 	@Before
 	public void frontEndSetUp() throws Exception {
-		factory = new AcousticFrontEndFactoryImp(fftn, ch, windowType, stepLength);
+		factory = new AcousticFrontEndFactoryImp(fftn, ch, windowType, stepLength, hz);
 		fe = factory
 				.setFftN(fftn)
 				.setMfccCh(ch)

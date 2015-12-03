@@ -1,8 +1,8 @@
 package jp.ac.kobe.stu.watanabe;
 
 public interface AcousticFrontEnd {
-    public void writeSamples(int [] samples);
-    public double [] readFft();
-    public double [] readMfcc();
- 
+    public void setSamples(int [] samples);
+    public double [] getFft();
+    public double [] getMfcc();
+    public boolean next();
 }

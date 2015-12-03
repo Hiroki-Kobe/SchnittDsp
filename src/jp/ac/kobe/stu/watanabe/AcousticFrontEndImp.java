@@ -1,5 +1,7 @@
 package jp.ac.kobe.stu.watanabe;
 
+import java.util.Arrays;
+
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
@@ -8,36 +10,93 @@ import org.apache.commons.math3.transform.TransformType;
 public class AcousticFrontEndImp implements AcousticFrontEnd {
 	private final int MFCC_CEPS_N = 12;
 	
+
 	private final int  HZ;
 	private final int  FFT_N;
 	private final int  MFCC_CH;
-    private final int  stepLength;
-	private final String windowType;
+    
+	private final int  stepLength;
+    private final String windowType;
+	private final int windowLen;
+	private final int windowSampNum;
+	private final int stepSampNum;
+	private static int shiftIx;
 	
-	private int    []  samples      = null;
+	private boolean running = true;
+
+	private int totalShiftNum;
+	private int    [] paddedSamples = null;
+	private int    [] totalSamples  = null;
 	private double [] preEmphSamp   = null;
 	private double [] windowedSamp  = null;
 	private double [] ampSamples    = null;
+	private int    [] tempSamples   = null;
 	
 	public static final DftNormalization STANDARD = DftNormalization.STANDARD;
 	public static final TransformType FORWARD     = TransformType.FORWARD;
 	
-	
-	public AcousticFrontEndImp(int fftN, int mfccCh, String win, int step, int hz){
+	/**
+	 * 
+	 * @param fftN
+	 * @param mfccCh
+	 * @param win
+	 * @param step
+	 * @param hz
+	 */
+	public AcousticFrontEndImp(int fftN, int mfccCh, String win, int winLen, int step, int hz){
 		this.FFT_N      = fftN;
 		this.MFCC_CH    = mfccCh;
 		this.windowType = win;
+		this.windowLen  = winLen;
 		this.stepLength = step;
 		this.HZ         = hz;
+		
+		this.windowSampNum = (int) (HZ * (windowLen  / (1.0 * 1000)));
+		this.stepSampNum =  (int)  (HZ * (stepLength / (1.0 * 1000)));
+
 		}
 
 	
 	@Override
-	public void writeSamples(int[] samples) {
-		assert (samples.length == this.FFT_N);		
-		this.samples = samples;
+	public void setSamples(int[] samples) {
+		this.totalSamples = samples;
+		for(int i = 0; i<windowSampNum;i++){
+			this.tempSamples[i] = totalSamples[i];
+		}
+		
+		/*
+		*  padding 0 into InteSamples for matching window length.
+		*/
+		int restOfSamples = (totalSamples.length - windowLen) % stepLength;
+		int paddedSampleLen = totalSamples.length + (stepLength - restOfSamples);
+		this.paddedSamples = new int [paddedSampleLen];				
+		Arrays.fill(this.paddedSamples, 0);
+		System.arraycopy(totalSamples, 0, this.paddedSamples, 0, totalSamples.length);
+		
+		/*
+		* Get the Number of Times of shifting the window.
+		*/
+		this.totalShiftNum = (paddedSampleLen - this.windowSampNum) / stepSampNum ;
 	}
 
+	
+	@Override
+	public boolean next(){
+		if(shiftIx < totalShiftNum){
+			int offset  = stepSampNum * shiftIx;
+			//int [] cuttedSamples = new int[FFT_N];
+			System.arraycopy(this.totalSamples, offset, tempSamples, 0, windowSampNum);
+			shiftIx++;
+			
+			this.running = true;
+		}else{
+			this.running = false;
+		}
+		
+		return running;
+	}
+	
+	
 
 	private double [] doPreEmph(int[] samples) {
 		double [] coef = {1.0, -0.97};
@@ -121,8 +180,8 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 	
 	
 	@Override
-	public double[] readFft() {
-		double [] preAmp = doPreEmph(samples);
+	public double[] getFft() {
+		double [] preAmp = doPreEmph(tempSamples);
 		double [] windowedSamp = windowFrames(preAmp);
 		double [] fftArr = doFft(windowedSamp);
 
@@ -130,8 +189,8 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		}
 	
 	@Override
-	public double [] readMfcc(){
-		double [] preAmp = doPreEmph(samples);
+	public double [] getMfcc(){
+		double [] preAmp = doPreEmph(tempSamples);
 		double [] windowedSamp = windowFrames(preAmp);
 		double [] fftArr = doFft(windowedSamp);
 		double [] mfcc = doMfcc(fftArr);

@@ -6,14 +6,16 @@ public class AcousticFrontEndFactoryImp implements AcousticFrontEndFactory{
 	private int MFCC_CH;
 	private int stepLength; /*ms*/
 	private int HZ;
+	private int winLen;
 	private String windowType;
 
 
-	public AcousticFrontEndFactoryImp(int fft_n, int mfcc_ch, String win, int step, int hz){
+	public AcousticFrontEndFactoryImp(int fft_n, int mfcc_ch, String win, int winLen, int step, int hz){
 		this.FFT_N      = fft_n;
 		this.MFCC_CH    = mfcc_ch;
 		this.windowType = win;
         this.stepLength = step;
+        this.winLen     = winLen;
         this.HZ         = hz;
 	}
 
@@ -34,9 +36,13 @@ public class AcousticFrontEndFactoryImp implements AcousticFrontEndFactory{
 	public AcousticFrontEndFactory setWindowType(String w){
 		this.windowType  = w;
 		return this;
-
 	}
-	
+
+	@Override
+	public AcousticFrontEndFactory setWindowLength(int wl){
+		this.winLen = wl;
+		return this;
+	}
 	@Override
 	public AcousticFrontEndFactory setStepLength(int s){
 		this.stepLength = s;
@@ -51,6 +57,7 @@ public class AcousticFrontEndFactoryImp implements AcousticFrontEndFactory{
 	
 	@Override
 	public AcousticFrontEnd build(){
-		return new AcousticFrontEndImp(this.FFT_N, this.MFCC_CH, this.windowType, this.stepLength, this.HZ);
+		return new AcousticFrontEndImp(this.FFT_N, this.MFCC_CH, this.windowType, this.winLen, this.stepLength, this.HZ);
 	}
 }
+	

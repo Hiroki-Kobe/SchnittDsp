@@ -14,13 +14,14 @@ public class Main{
 		final  String wavName = "res/test.wav";
 		final  String wavFileIn;
 		
-		final int  fftn = 512;
-		final int  ch   = 26;
+		final int  fftn         = 512;
+		final int  ch           = 26;
 		final String windowType = "Hunning";
 		final int stepLength    = 10;  /*ms*/
-		final int windowLength = 20; /*ms*/
+		final int windowLength  = 20; /*ms*/
+		final boolean running = true;
+		
 		final int hz;
-		final int stepTotalNum;
 
 		
 		/**
@@ -31,7 +32,9 @@ public class Main{
 		WavClip wav = new WavClip(wavFileIn) ;
 		File fileIn = new File(wavFileIn);
 		
-		// Get sampling rate
+		/** 
+		 * Get sampling rate
+		 **/
 		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(fileIn);
 		hz = (int) audioInputStream.getFormat().getSampleRate();
 
@@ -39,41 +42,30 @@ public class Main{
 		/*
 		 * Set AcousticFrontEndFactory
 		 */
-		AcousticFrontEndFactory factory = new AcousticFrontEndFactoryImp(fftn, ch, windowType, stepLength, hz);
+		AcousticFrontEndFactory factory = new AcousticFrontEndFactoryImp(fftn, ch, windowType, windowLength, stepLength, hz);
 		AcousticFrontEnd fe = factory
 				.setFftN(fftn)
 				.setMfccCh(ch)
 				.setWindowType(windowType)
+				.setWindowLength(windowLength)
 				.setStepLength(stepLength)
 				.build()
 				;
+		
+		
 		int [] samples = wav.toIntArray();
-		ShiftWavSamples shiftSamp = new ShiftWavSamples(samples, stepLength, windowLength, fftn, hz);
-
-
-		/*
-		 * Shifting the  window to wav samples, and return FFT value and MFCC value
-		 */
-		int [] temp = new int[fftn];
-		int shiftIx = 0;
-
-		for(int i = 0; i<shiftSamp.totalShiftnNum; i++){			
-			temp = shiftSamp.returnValue(shiftIx);
-			fe.writeSamples(temp);
-		    
-		    double [] fftArr = fe.readFft();
-		    double [] mfcc = fe.readMfcc();
-
-		    for(int j =0; j<fftArr.length; j++){
+        fe.setSamples(samples);
+		
+        while(running){
+        	
+        	
+        }
+		for(int j =0; j<fftArr.length; j++){
 			    System.out.println("FFT: " + fftArr[j]);
 		    }
 		    for(int j =0; j<mfcc.length; j++){
 		    System.out.println("MFCC: " + mfcc[j]);		    	
 		    }
 		    
-		    shiftIx ++;
-		}
-
-		System.out.println("Finish FFT + MFCC");
 	}
 }

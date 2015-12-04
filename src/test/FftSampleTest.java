@@ -50,6 +50,7 @@ public class FftSampleTest {
 	static int fftn = 512;
 	static int ch   = 26;
 	static String windowType = "Hunning";
+	static int winLen = 20;
 	static int stepLength = 10;
 	static int hz = 16000;
 	
@@ -153,11 +154,14 @@ public class FftSampleTest {
 	
 	@Before
 	public void frontEndSetUp() throws Exception {
-		factory = new AcousticFrontEndFactoryImp(fftn, ch, windowType, stepLength, hz);
+		factory = new AcousticFrontEndFactoryImp(fftn, ch, windowType, winLen, stepLength, hz);
 		fe = factory
 				.setFftN(fftn)
 				.setMfccCh(ch)
+				.setWindowLength(winLen)
 				.setWindowType(windowType)
+				.setStepLength(stepLength)
+				.setHz(hz)
 				.build()
 				;
 		
@@ -184,7 +188,6 @@ public class FftSampleTest {
 	}
 
 
-    
 //	@Test
 //	public void testPreemphedSamples() throws IOException{
 //		int [] intSamplesTemp = new int [fftn]; 
@@ -220,20 +223,21 @@ public class FftSampleTest {
 //		}
 //	}
 	
+	
 	@Test
 	public void testFftSamples() throws IOException{
-		int [] intSamplesTemp = new int [fftn];
-		System.arraycopy(intTestSamples , 0, intSamplesTemp, 0, fftn);
-		
-		fe.writeSamples(intSamplesTemp);
-		double [] fftTestSamples = fe.readFft();
-		System.out.println(fftTestSamples.length);
+		fe.setSamples(intTestSamples);
+		double [] fftTestSamples = fe.getFft();
+		System.err.println(fftTestSamples.length);
 
 		for(int i = 0; i<fftn/2; i++){
 			double expected = fftExpectedAry.get(i);
 			double obs = fftTestSamples[i];
 			
-			assertEquals(expected, obs, 0.00001);
+			System.err.println("exp: " + expected);
+			System.err.println("obs: " + obs);
+
+			assertEquals(expected, obs, 0.0001);
 		}
 	}
 }

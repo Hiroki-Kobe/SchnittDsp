@@ -7,10 +7,9 @@ import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
 import org.apache.commons.math3.transform.TransformType;
 
-public class AcousticFrontEndImp implements AcousticFrontEnd {
-	private final int MFCC_CEPS_N = 12;
-	
 
+public class AcousticFrontEndImp implements AcousticFrontEnd {
+	private final int  MFCC_CEPS_N = 12;
 	private final int  HZ;
 	private final int  FFT_N;
 	private final int  MFCC_CH;
@@ -30,7 +29,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 	private double [] preEmphSamp   = null;
 	private double [] windowedSamp  = null;
 	private double [] ampSamples    = null;
-	private int    [] tempSamples   = null;
+	private int     [] tempSamples;
 	
 	public static final DftNormalization STANDARD = DftNormalization.STANDARD;
 	public static final TransformType FORWARD     = TransformType.FORWARD;
@@ -50,22 +49,36 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		this.windowLen  = winLen;
 		this.stepLength = step;
 		this.HZ         = hz;
-		
+
 		this.windowSampNum = (int) (HZ * (windowLen  / (1.0 * 1000)));
 		this.stepSampNum =  (int)  (HZ * (stepLength / (1.0 * 1000)));
 
+		
+		// DEBUG
+		// System.err.println("winsampnum: " + windowSampNum);
+		// System.err.println("stepSampNum: " + stepSampNum);
 		}
 
 	
 	@Override
 	public void setSamples(int[] samples) {
 		this.totalSamples = samples;
-		for(int i = 0; i<windowSampNum;i++){
-			this.tempSamples[i] = totalSamples[i];
+
+		/** windowedSamp -> 320 points
+		*  windowedSamp ->  0 padded
+		*  windowedSamp's length is set to FFTN
+		**/
+		this.tempSamples = new int [FFT_N];
+		Arrays.fill(this.tempSamples, 0);
+		System.arraycopy(totalSamples, 0, tempSamples, 0, windowSampNum);
+
+		for(int i = 0; i<FFT_N;i++){
+			System.out.println("Temp: " + tempSamples[i] + "  i: " + i);
 		}
 		
+		
 		/*
-		*  padding 0 into InteSamples for matching window length.
+		*  padding 0 into totalSamples for matching window length.
 		*/
 		int restOfSamples = (totalSamples.length - windowLen) % stepLength;
 		int paddedSampleLen = totalSamples.length + (stepLength - restOfSamples);
@@ -73,10 +86,14 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		Arrays.fill(this.paddedSamples, 0);
 		System.arraycopy(totalSamples, 0, this.paddedSamples, 0, totalSamples.length);
 		
-		/*
-		* Get the Number of Times of shifting the window.
+		
+		System.out.println("Temp: " + tempSamples.length);
+		
+		/*		
+		*  Get Number of Times of Shifting Window.
 		*/
-		this.totalShiftNum = (paddedSampleLen - this.windowSampNum) / stepSampNum ;
+		this.totalShiftNum = (paddedSampleLen - this.windowSampNum) / stepSampNum;
+//		System.err.println(totalShiftNum);
 	}
 
 	
@@ -107,9 +124,11 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 	}
 
 		
-// Windowing: INPUT: preEmphasized samples
+	/*
+	 * Windowing: INPUT: preEmphasized samples
+	 */
 	private double[] windowFrames(double[] preEmphedSamples) {
-		windowedSamp = new double [this.FFT_N];
+		windowedSamp = new double [FFT_N];
 		if(windowType == "Hunning"){		
 		    for(int n=0; n<FFT_N; n++) {
 			    windowedSamp[n] =  (0.5 - (0.5 * Math.cos(2 * Math.PI * n/ (FFT_N -1 )))) * preEmphedSamples[n];
@@ -148,7 +167,9 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 			}
 		}
 
-//		Calculating Sum of FilteredAmp
+		/*
+		 * 		Calculating Sum of FilteredAmp
+		 */
 		double [] sumOfFilteredAmp = new double [MFCC_CH];
 		for(int c = 0; c < MFCC_CH; c++){
 			// Calculating the sum of FilterBanked Amplitude; 			
@@ -159,8 +180,9 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 			sumOfFilteredAmp[c] = sumValue;	
 		}
 
+		//DEBUG
 		for(int i = 0; i<MFCC_CH; i++){
-			System.out.println("check: " + sumOfFilteredAmp[i]);
+			System.err.println("check: " + sumOfFilteredAmp[i]);
 		}
 		
 		
@@ -172,10 +194,10 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		        
 		Dct dct = new Dct(MFCC_CH);
 		double [] cepsArr = dct.transform(melSpec);
-		double [] mfcc = new double [MFCC_CEPS_N];  	
-		System.arraycopy(cepsArr, 0, mfcc, 0, MFCC_CEPS_N);
+		double [] mfccAry = new double [MFCC_CEPS_N];  	
+		System.arraycopy(cepsArr, 0, mfccAry, 0, MFCC_CEPS_N);
 
-		return mfcc;
+		return mfccAry;
 	}
 	
 	
@@ -193,8 +215,8 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		double [] preAmp = doPreEmph(tempSamples);
 		double [] windowedSamp = windowFrames(preAmp);
 		double [] fftArr = doFft(windowedSamp);
-		double [] mfcc = doMfcc(fftArr);
+		double [] mfccArr = doMfcc(fftArr);
 				
-		return mfcc;
+		return mfccArr;
 	}	
 }

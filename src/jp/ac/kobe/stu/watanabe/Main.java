@@ -19,7 +19,7 @@ public class Main{
 		final String windowType = "Hunning";
 		final int stepLength    = 10;  /*ms*/
 		final int windowLength  = 20; /*ms*/
-		final boolean running = true;
+		boolean running = true;
 		
 		final int hz;
 
@@ -39,9 +39,9 @@ public class Main{
 		hz = (int) audioInputStream.getFormat().getSampleRate();
 
 		
-		/*
+		/**
 		 * Set AcousticFrontEndFactory
-		 */
+		 **/
 		AcousticFrontEndFactory factory = new AcousticFrontEndFactoryImp(fftn, ch, windowType, windowLength, stepLength, hz);
 		AcousticFrontEnd fe = factory
 				.setFftN(fftn)
@@ -51,21 +51,33 @@ public class Main{
 				.setStepLength(stepLength)
 				.build()
 				;
-		
-		
+
+		/**
+		 * Set Integer samples
+		 */
 		int [] samples = wav.toIntArray();
         fe.setSamples(samples);
-		
+		int ix = 0;
+        	
+		/**
+		 *  Loop return Acoustic value!
+		 */
         while(running){
+        	double [] fftArr = fe.getFft();
+        	double [] mfccArr = fe.getMfcc();
+        	running = fe.next();
+
+        	//DEBUG
+        	System.err.println("IX: " + ix);
         	
-        	
+        	ix ++;
+//        	for(int j =0; j<fftArr.length; j++){
+//        		System.out.println("FFT: " + fftArr[j]);
+//        	}
+//        	
+//        	for(int j =0; j<mfccArr.length; j++){
+//        		System.out.println("MFCC: " + mfccArr[j]);		    	
+//        	}
         }
-		for(int j =0; j<fftArr.length; j++){
-			    System.out.println("FFT: " + fftArr[j]);
-		    }
-		    for(int j =0; j<mfcc.length; j++){
-		    System.out.println("MFCC: " + mfcc[j]);		    	
-		    }
-		    
 	}
 }

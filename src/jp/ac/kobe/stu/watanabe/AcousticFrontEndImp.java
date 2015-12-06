@@ -29,7 +29,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 	private double [] preEmphSamp   = null;
 	private double [] windowedSamp  = null;
 	private double [] ampSamples    = null;
-	private int     [] tempSamples;
+	private int    [] tempSamples;
 	
 	public static final DftNormalization STANDARD = DftNormalization.STANDARD;
 	public static final TransformType FORWARD     = TransformType.FORWARD;
@@ -50,8 +50,8 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		this.stepLength = step;
 		this.HZ         = hz;
 
-		this.windowSampNum = (int) (HZ * (windowLen  / (1.0 * 1000)));
-		this.stepSampNum =  (int)  (HZ * (stepLength / (1.0 * 1000)));
+		this.windowSampNum =  (int) (HZ * (windowLen  / (1.0 * 1000)));
+		this.stepSampNum   =  (int)  (HZ * (stepLength / (1.0 * 1000)));
 
 		
 		// DEBUG
@@ -93,7 +93,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		*  Get Number of Times of Shifting Window.
 		*/
 		this.totalShiftNum = (paddedSampleLen - this.windowSampNum) / stepSampNum;
-//		System.err.println(totalShiftNum);
+        //		System.err.println(totalShiftNum);
 	}
 
 	
@@ -157,16 +157,8 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
     //	INPUT: Amplitude Spectrum
 	private double [] doMfcc(double [] ampSamples){
 		MelFilterBank melFilter = new MelFilterBank(FFT_N, HZ, MFCC_CH);
-		double [][] filterBank = melFilter.calcMelFilterBank();	
-		
-		// FilteredAmp = Amplitude array that is applied mel-FilterBank from CH1 = MFCC_CH to 
-		double [] [] filterBankedAmp = new double [MFCC_CH][FFT_N/2] ;
-		for(int c = 0; c < MFCC_CH; c++){
-			for(int i = 0; i < FFT_N/ 2; i++){
-				filterBankedAmp[c][i] = ampSamples[i] * filterBank[c][i];
-			}
-		}
-
+		double [][] melFilterBankedAmp = melFilter.doMelFilterBank(ampSamples);		
+	
 		/*
 		 * 		Calculating Sum of FilteredAmp
 		 */
@@ -175,7 +167,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 			// Calculating the sum of FilterBanked Amplitude; 			
 			double sumValue = 0;
 			for(int i = 0; i < FFT_N/2; i++){
-				sumValue += filterBankedAmp[c][i];
+				sumValue += melFilterBankedAmp[c][i];
 			}	
 			sumOfFilteredAmp[c] = sumValue;	
 		}

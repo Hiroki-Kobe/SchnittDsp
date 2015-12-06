@@ -19,9 +19,8 @@ public class Main{
 		final String windowType = "Hunning";
 		final int stepLength    = 10;  /*ms*/
 		final int windowLength  = 20; /*ms*/
-		boolean running = true;
-		
 		final int hz;
+		boolean running = true;
 
 		
 		/**
@@ -53,14 +52,14 @@ public class Main{
 				;
 
 		/**
-		 * Set Integer samples
+		 * Set Integer Samples
 		 */
 		int [] samples = wav.toIntArray();
         fe.setSamples(samples);
 		int ix = 0;
         	
 		/**
-		 *  Loop return Acoustic value!
+		 *  Loop Return Acoustic Values
 		 */
         while(running){
         	double [] fftArr = fe.getFft();

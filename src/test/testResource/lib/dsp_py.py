@@ -152,6 +152,38 @@ class Dsp:
         
         return self.spec
 
+    def do_melFilterBank(self, ampArray):
+        self.signal = ampArray
+        self.fmax = self.hz / 2
+        self.melmax = 1127.01048 * np.log(self.fmax / 700 + 1)
+        self.nmax = self.fftn/ 2
+        self.df = self.hz / self.fftn
+        self.dmel = self.melmax / (self.mfcc_ch + 1)
+        self.melcenters = np.arange(1, self.mfcc_ch + 1) * self.dmel
+
+        self.fcenters = 700.0 * (np.exp(self.melcenters / 1127.01048) - 1.0)
+        self.indexcenter = np.round(self.fcenters / self.df)
+
+        # 各フィルタの開始位置のインデックス
+        self.indexstart = np.hstack(([0], self.indexcenter[0:self.mfcc_ch - 1]))
+        # 各フィルタの終了位置のインデックス
+        self.indexstop = np.hstack((self.indexcenter[1:self.mfcc_ch], [self.nmax]))
+
+        self.filterbank = np.zeros((self.mfcc_ch, self.nmax))
+        for c in np.arange(0, self.mfcc_ch):
+            # 三角フィルタの左の直線の傾きから点を求める
+            self.increment= 1.0 / (self.indexcenter[c] - self.indexstart[c])
+            for i in np.arange(self.indexstart[c], self.indexcenter[c]):
+                self.filterbank[c, i] = (i - self.indexstart[c]) * self.increment
+            # 三角フィルタの右の直線の傾きから点を求める
+            self.decrement = 1.0 / (self.indexstop[c] - self.indexcenter[c])
+            for i in np.arange(self.indexcenter[c], self.indexstop[c]):
+                self.filterbank[c, i] = 1.0 - ((i - self.indexcenter[c]) * self.decrement)
+
+        self.mspec = np.dot(self.signal, self.filterbank.T)
+        return self.mspec
+
+
     def do_mfcc(self, ampArray):
         self.signal = ampArray
         self.fmax = self.hz / 2

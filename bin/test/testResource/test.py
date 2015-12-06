@@ -16,9 +16,11 @@ argv = sys.argv
 
 filename     = argv[1]
 FFTN         = 512
+WINDOW_LEN   = 20 #ms
 WINDOW       = "Hanning"
 PREEMPH_COEF = 0.97
 CH           = 20
+
 
 
 
@@ -42,6 +44,7 @@ coef = dsp.get_preemph_coef()
 window_type = dsp.get_windowtype()
 
 
+
 ##################
 # Do DSP
 ##################
@@ -49,7 +52,15 @@ window_type = dsp.get_windowtype()
 int_samples = dsp.do_wav2int()
 
 ### Preemph
-preemphed_samples = dsp.do_preemph(int_samples[:FFTN])
+tempSamples = [0] * (FFTN-1)
+tempSamples[0:319] = int_samples[:320]
+
+print "temp", tempSamples, len(tempSamples)
+
+
+
+preemphed_samples = dsp.do_preemph(tempSamples)
+
 ### Windowning
 windowed_samples = dsp.do_windowning(preemphed_samples)
 

@@ -3,16 +3,18 @@ package jp.ac.kobe.stu.watanabe;
 
 public class MelFilterBank {
 
-	public double[] ampSamples;
+	public double []   ampSamples;
+	public double [][] melFilterBankedAmp;
 	private final int FS;
 	private final int FFT_N;
 	private final int MFCC_CH;
 
-	private double fmax;             // Nyquist
+	private double fmax;            // Nyquist
 	private double melMax;          // Mel-Nyquist
 	private int    nmax;            // Maximum Number of Frequency Index
 	private double df;              // Frequency Resolution
 	private double dmel;            // Interval of center of FilterBank in MelScale
+	
 	
 	
 	/**
@@ -29,13 +31,13 @@ public class MelFilterBank {
 	
 	
 	/**
-	 * Calculates Mel Filter bank.
+	 * Calculates Mel-Filter bank.
 	 * 
 	 * @param samples 
 	 * @return
 	 */
-	public double [][] calcMelFilterBank(){
-//		this.ampSamples = samples;
+	public double [][] doMelFilterBank(double [] samples){
+		this.ampSamples = samples;
 		this.fmax   =  FS / 2;                                  // Nyquist
 		this.melMax =  1127.01048 * Math.log(fmax / 700.0 + 1.0); // Mel-Nyquist
 		this.nmax   =  FFT_N /2;                                // Maximum Number of Frequency Index
@@ -94,6 +96,15 @@ public class MelFilterBank {
 			}
 		}
 
-		return filterBank;
+		
+		// FilteredAmp = Amplitude array that is applied mel-FilterBank from CH1 = MFCC_CH to 
+		melFilterBankedAmp = new double [MFCC_CH][FFT_N/2] ;
+			for(int c = 0; c < MFCC_CH; c++){
+				for(int i = 0; i < FFT_N/ 2; i++){
+					melFilterBankedAmp[c][i] = ampSamples[i] * filterBank[c][i];
+				}
+			}
+
+		return melFilterBankedAmp;
 	}
 }

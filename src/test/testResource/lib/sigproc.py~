@@ -100,7 +100,7 @@ def logpowspec(frames,NFFT,norm=1):
     else:
         return lps
     
-def preemphasis(signal,coeff=0.95):
+def preemphasis(signal,coeff=0.97):
     """perform preemphasis on the input signal.
     
     :param signal: The signal to filter.
@@ -108,7 +108,4 @@ def preemphasis(signal,coeff=0.95):
     :returns: the filtered signal.
     """    
     return numpy.append(signal[0],signal[1:]-coeff*signal[:-1])
-
-
-
 

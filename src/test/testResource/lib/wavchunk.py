@@ -9,13 +9,20 @@ import math, struct
 import sigproc
 
 
-
+"""
 def hz2mel(hz):
     return 2595 * np.log10(1+hz / 700.0)
 
 
 def mel2hz(mel):
     return 700*(10**(mel/2595.0)-1)
+
+"""
+def hz2mel(f):
+    return 1127.01048 * np.log(f / 700.0 + 1.0)
+
+def mel2hz(m):
+    return 700.0 * (np.exp(m / 1127.01048) - 1.0)
 
 def read_wav(path):
     wav_f = wave.open(path, "r")
@@ -85,9 +92,15 @@ class WavChunk:
         self.powspec1 = sigproc.powspec(self.samples,self.nfft)        
         self.bank = get_filterbanks(nfilt=self.nmffc, nfft=self.nfft, samplerate=self.hz)
         self.mfc = np.dot(self.powspec1, self.bank.T)
-        
         return self.mfc
-
+    def do_mfcc2(self, samples, fft_n, mffc_ch):
+        """ produces magnitude-> pow.spec on a freq scale """
+        self.samples = samples
+        self.nfft = fft_n
+        self.nmffc = mffc_ch
+        self.bank = get_filterbanks(nfilt=self.nmffc, nfft=self.nfft, samplerate=self.hz)
+        self.mfc = np.dot(np.array(self.samples), self.bank.T)        
+        return self.mfc
     def do_dct(self, sz=None, exclude_zero=None):
         """ calc coefficients from  """
         self.log_mfc = np.log(self.mfc)

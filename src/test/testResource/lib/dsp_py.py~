@@ -13,7 +13,6 @@ from pylab import *
 
 class Dsp:
     """ Class for digital signal processing
-
         This HAVE TO set:
             - (1) wav file names
             - (2) preemphasized coefficients
@@ -152,7 +151,7 @@ class Dsp:
         
         return self.spec
 
-    def do_mfcc(self, ampArray):
+    def do_melFilterBank(self, ampArray):
         self.signal = ampArray
         self.fmax = self.hz / 2
         self.melmax = 1127.01048 * np.log(self.fmax / 700 + 1)
@@ -180,9 +179,13 @@ class Dsp:
             for i in np.arange(self.indexcenter[c], self.indexstop[c]):
                 self.filterbank[c, i] = 1.0 - ((i - self.indexcenter[c]) * self.decrement)
 
-#        self.mspec = np.log10(np.dot(self.signal, self.filterbank.T))
         self.mspec = np.dot(self.signal, self.filterbank.T)
         return self.mspec
-#        self.ceps = scipy.fftpack.realtransforms.dct(self.mspec, type=2, norm="ortho", axis=-1)
-#        return self.ceps[:12]
+
+
+    def do_mfcc(self, mspec):
+        self.log_mfc = np.log10(mspec)
+        self.dct = scipy.fftpack.dct(self.log_mfc, type=2, norm="ortho", axis=-1)
+        return self.dct[:12]
+
 

@@ -5,6 +5,7 @@ public class MelFilterBank {
 
 	public double []   ampSamples;
 	public double [][] melFilterBankedAmp;
+	public double [] sumOfFilteredAmp;
 	private final int FS;
 	private final int FFT_N;
 	private final int MFCC_CH;
@@ -36,7 +37,7 @@ public class MelFilterBank {
 	 * @param samples 
 	 * @return
 	 */
-	public double [][] doMelFilterBank(double [] samples){
+	public double [] doMelFilterBank(double [] samples){
 		this.ampSamples = samples;
 		this.fmax   =  FS / 2;                                  // Nyquist
 		this.melMax =  1127.01048 * Math.log(fmax / 700.0 + 1.0); // Mel-Nyquist
@@ -104,7 +105,24 @@ public class MelFilterBank {
 					melFilterBankedAmp[c][i] = ampSamples[i] * filterBank[c][i];
 				}
 			}
+			
+		/*
+		 * 		Calculating Sum of FilteredAmp
+		 */
+		sumOfFilteredAmp = new double [MFCC_CH];
+		double sumValue = 0;
+		for(int c = 0; c < MFCC_CH; c++){
+			sumValue = 0;
+			// Calc. sum of FilterBanked Amp; 			
+			for(int i = 0; i < FFT_N/2; i++){
+				sumValue += melFilterBankedAmp[c][i];
+				//System.err.println("sum: " + c + "; " + sumValue);
+				
+			}	
+			sumOfFilteredAmp[c] = sumValue;	
+		}
 
-		return melFilterBankedAmp;
+
+		return sumOfFilteredAmp;
 	}
 }

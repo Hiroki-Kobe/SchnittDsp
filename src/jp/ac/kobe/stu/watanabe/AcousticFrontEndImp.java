@@ -72,10 +72,6 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		Arrays.fill(this.tempSamples, 0);
 		System.arraycopy(totalSamples, 0, tempSamples, 0, windowSampNum);
 
-		for(int i = 0; i<FFT_N;i++){
-			System.out.println("Temp: " + tempSamples[i] + "  i: " + i);
-		}
-		
 		
 		/*
 		*  padding 0 into totalSamples for matching window length.
@@ -85,10 +81,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		this.paddedSamples = new int [paddedSampleLen];				
 		Arrays.fill(this.paddedSamples, 0);
 		System.arraycopy(totalSamples, 0, this.paddedSamples, 0, totalSamples.length);
-		
-		
-		System.out.println("Temp: " + tempSamples.length);
-		
+				
 		/*		
 		*  Get Number of Times of Shifting Window.
 		*/
@@ -157,39 +150,25 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
     //	INPUT: Amplitude Spectrum
 	private double [] doMfcc(double [] ampSamples){
 		MelFilterBank melFilter = new MelFilterBank(FFT_N, HZ, MFCC_CH);
-		double [][] melFilterBankedAmp = melFilter.doMelFilterBank(ampSamples);		
-	
-		/*
-		 * 		Calculating Sum of FilteredAmp
-		 */
-		double [] sumOfFilteredAmp = new double [MFCC_CH];
-		for(int c = 0; c < MFCC_CH; c++){
-			// Calculating the sum of FilterBanked Amplitude; 			
-			double sumValue = 0;
-			for(int i = 0; i < FFT_N/2; i++){
-				sumValue += melFilterBankedAmp[c][i];
-			}	
-			sumOfFilteredAmp[c] = sumValue;	
-		}
-
-		//DEBUG
-		for(int i = 0; i<MFCC_CH; i++){
-			System.err.println("check: " + sumOfFilteredAmp[i]);
-		}
+		//System.err.println("test amp: " + ampSamples[0]);
 		
+		double [] mfc = new double [MFCC_CH];
+		mfc = melFilter.doMelFilterBank(ampSamples);		
 		
-		double [] melSpec = new double [MFCC_CH];
+		//System.err.println("test mfc: " + mfc[0]); 
+		
 		for(int c = 0; c<MFCC_CH; c++){
 			// Log-transfer Sum of FilteredBanked Amplitude			
-			melSpec[c] = Math.log(sumOfFilteredAmp[c]);
+			mfc[c] = Math.log10(mfc[c]);
 		}
 		        
 		Dct dct = new Dct(MFCC_CH);
-		double [] cepsArr = dct.transform(melSpec);
-		double [] mfccAry = new double [MFCC_CEPS_N];  	
-		System.arraycopy(cepsArr, 0, mfccAry, 0, MFCC_CEPS_N);
+		double [] cepsArr = dct.transform(mfc);
+		double [] mfccArr = new double [MFCC_CEPS_N];  	
+		System.arraycopy(cepsArr, 0, mfccArr, 0, MFCC_CEPS_N);
 
-		return mfccAry;
+		//System.err.println("test: " + mfccArr[0]); 
+		return mfccArr;
 	}
 	
 	

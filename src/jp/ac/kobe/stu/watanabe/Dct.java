@@ -17,7 +17,7 @@ public class Dct {
 	}
 	
 	public double [] transform(double [] data){
-		double [] dctArR = new double [N];
+		double [] dctArr = new double [N];
 		
 		for(int i = 0; i<N; i++){
 			double sumOf = 0;
@@ -26,9 +26,9 @@ public class Dct {
 				sumOf += value;
 			}
 			
-			dctArR[i] = sumOf;
+			dctArr[i] = sumOf;
 		}
 		
-		return dctArR;
+		return dctArr;
 	}
 }

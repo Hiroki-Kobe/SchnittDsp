@@ -54,8 +54,8 @@ public class Main{
 		/**
 		 * Set Integer Samples
 		 */
-		int [] samples = wav.toIntArray();
-        fe.setSamples(samples);
+		int [] intSamples = wav.toIntArray();
+        fe.setSamples(intSamples);
 		int ix = 0;
         	
 		/**
@@ -67,7 +67,7 @@ public class Main{
         	running = fe.next();
 
         	//DEBUG
-        	System.err.println("IX: " + ix);
+        	//System.err.println("IX: " + ix);
         	
         	ix ++;
 //        	for(int j =0; j<fftArr.length; j++){

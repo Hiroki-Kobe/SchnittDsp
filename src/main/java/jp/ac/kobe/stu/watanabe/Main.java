@@ -8,7 +8,7 @@ import javax.sound.sampled.AudioSystem;
 import info.pinlab.pinsound.WavClip;
 
 /**
- * This prigram is set the wav files and rturn the fft and mfcc value
+ * This prigram is set the wav files and return the fft and mfcc value
  * 
  * @author snoopy
  * @version 1.0
@@ -17,7 +17,7 @@ import info.pinlab.pinsound.WavClip;
 public class Main {
 	public static void main(String[] args) throws Exception {
 		final String HOME;
-		final String filePath = "workspace/SchnittDsp/src/main/resources/test.wav";
+		final String filePath = "workspace/SchnittDsp/src/main/resources/jp/ac/kobe/stu/watanabe/test.wav";
 		final String wavFileIn;
 
 		final int fftn = 512;

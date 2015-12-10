@@ -1,1 +1,2 @@
-java  -cp "../lib/...jar;<ClassPath lib imports> " -jar DSP.jar
+java  -jar dsp.jar
+

@@ -47,7 +47,7 @@ tempSamples[:win_samp_len] = int_samples[:win_samp_len]
 preemphed_samples = dsp.do_preemph(tempSamples)
 windowed_samples = dsp.do_windowning(preemphed_samples)
 fft_spec = dsp.do_fft(windowed_samples, plotting=False, saving=False)
-pow_spec = np.square(fft_spec)
+pow_spec = np.square(fft_spec, 2)
 
 mfc = dsp.do_melFilterBank(pow_spec)
 mfccArr = dsp.do_mfcc(mfc)

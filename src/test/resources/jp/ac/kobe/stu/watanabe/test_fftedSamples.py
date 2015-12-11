@@ -37,7 +37,7 @@ assert(win_samp_no == 320)
 int_samples = dsp.do_wav2int()
 # get preemphed integer
 tempSamples = [0] * (FFTN)
-tempSamples[:win_samp_len] = int_samples[:win_samp _len]
+tempSamples[:win_samp_no] = int_samples[:win_samp_no]
 preemphed_samples = dsp.do_preemph(tempSamples)
 windowed_samples = dsp.do_windowning(preemphed_samples)
 

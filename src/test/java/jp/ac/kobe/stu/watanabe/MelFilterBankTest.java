@@ -19,7 +19,7 @@ public class MelFilterBankTest {
 
 	static String CWD;
 	static BufferedReader br;
-	static String testFileName = "src/test/testResource/test_melfilter-bank.txt";
+	static String testFileName = "workspace/SchnittDsp/src/test/resources/jp/ac/kobe/stu/watanabe/test_melfilter-bank.txt";
 	
 	static double [] testValueArr;
 	static ArrayList<Double> expArr;
@@ -32,7 +32,7 @@ public class MelFilterBankTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		try{
-			CWD = System.getProperty("user.dir");
+			CWD = System.getProperty("user.home");
 			String absTestFileName = new File(CWD, testFileName).getPath();
 			System.err.println(absTestFileName);
 			br = new BufferedReader(new FileReader(absTestFileName));

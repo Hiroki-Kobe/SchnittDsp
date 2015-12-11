@@ -151,8 +151,8 @@ class Dsp:
         
         return self.spec
 
-    def do_melFilterBank(self, ampArray):
-        self.signal = ampArray
+    def do_melFilterBank(self, powArray):
+        self.signal = powArray
         self.fmax = self.hz / 2
         self.melmax = 1127.01048 * np.log(self.fmax / 700 + 1)
         self.nmax = self.fftn/ 2
@@ -183,8 +183,8 @@ class Dsp:
         return self.mspec
 
 
-    def do_mfcc(self, mspec):
-        self.log_mfc = np.log10(mspec)
+    def do_mfcc(self, powspec):
+        self.log_mfc = np.log10(powspec)
         #self.dct = scipy.fftpack.dct(self.log_mfc, type=2, norm="ortho", axis=-1)
         self.dct = scipy.fftpack.dct(self.log_mfc, type=2, norm="ortho", axis=-1)        
         return self.dct[:12]

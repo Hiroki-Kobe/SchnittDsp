@@ -20,28 +20,28 @@ import jp.ac.kobe.stu.watanabe.AcousticFrontEndFactoryImp;
 
 public class FftSampleTest {
 //	Default
-	static String currentPath = System.getProperty("user.dir");
+	static String currentPath = System.getProperty("user.home");
 	private static BufferedReader br;
-	static String Snd = "src/test/testResource/snd/test1.wav";
-//	static String Snd = "src/test/testResource/snd/test2.wav";
+	static String Snd = "workspace/SchnittDsp/src/test/resources/jp/ac/kobe/stu/watanabe/snd/test1.wav";
+//	static String Snd = "workspace/SchnittDsp/src/test/resources/jp/ac/kobe/stu/watanabe/snd/test2.wav";
 
 //	For Int_Tests
-	static String intFile = "src/test/testResource/int_samples.txt";
+	static String intFile = "workspace/SchnittDsp/src/test/resources/jp/ac/kobe/stu/watanabe/int_samples.txt";
 	static ArrayList<Integer> intExpectedAry;
 	static int [] intTestSamples;
 
 //  For Preemphed Samples
-	static String preemphedFile = "src/test/testResource/preemph_samples.txt";	
+	static String preemphedFile = "workspace/SchnittDsp/src/test/resources/jp/ac/kobe/stu/watanabe/preemph_samples.txt";	
 	static ArrayList<Double> preemphedExpectedAry;
 	static double [] preemphedTestSamples;
 
 //  For Windowed samples
-	static String windowedFile  = "src/test/testResource/windowed_samples.txt";
+	static String windowedFile  = "workspace/SchnittDsp/src/test/resources/jp/ac/kobe/stu/watanabe/windowed_samples.txt";
 	static ArrayList<Double> windowedExpectedAry;
 	static double [] windowesTestSamples;
 	
 //	For fft samples
-	static String fftFile = "src/test/testResource/fft_samples.txt";
+	static String fftFile = "workspace/SchnittDsp/src/test/resources/jp/ac/kobe/stu/watanabe/fft_samples.txt";
 	static ArrayList<Double> fftExpectedAry;
 	static double [] fftTestSamples;
 	

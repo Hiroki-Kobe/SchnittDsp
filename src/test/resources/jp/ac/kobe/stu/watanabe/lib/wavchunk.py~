@@ -93,9 +93,20 @@ class WavChunk:
         self.bank = get_filterbanks(nfilt=self.nmffc, nfft=self.nfft, samplerate=self.hz)
         self.mfc = np.dot(self.powspec1, self.bank.T)
         return self.mfc
-
+    def do_mfcc2(self, samp, fft_n, mffc_ch):
+        """ produces magnitude-> pow.spec on a freq scale """
+        self.samp = samp
+        self.nfft = fft_n
+        self.nmffc = mffc_ch
+        self.mag = sigproc.magspec(self.samp, self.nfft)
+        self.powspec2 = np.square(self.mag)
+        self.powspec1 = sigproc.powspec(self.samp,self.nfft)        
+        self.bank = get_filterbanks(nfilt=self.nmffc, nfft=self.nfft, samplerate=self.hz)
+        self.mfc = np.dot(self.powspec1, self.bank.T)
+        return self.mfc
     def do_dct(self, sz=None, exclude_zero=None):
         """ calc coefficients from  """
+        self.log_mfc = np.log10(self.mfc)
         self.log_mfc = np.log(self.mfc)
         self.dct = scipy.fftpack.dct(self.log_mfc, type=2)
         # truncation if needed

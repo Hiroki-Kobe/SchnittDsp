@@ -21,7 +21,7 @@ public class DctTest {
 
 	static double [] obsArr;
 	static ArrayList<Double> expArr;
-	static String testFileName = "src/test/testResource/test_dct.txt";
+	static String testFileName = "workspace/SchnittDsp/src/test/resources/jp/ac/kobe/stu/watanabe/test_dct.txt";
 	
 	static double [] testArr = 
 		{1.0000, 1.0000, 1.0000, 1.0000, 2.0000, 2.0000, 2.0000, 2.0000, 2.0000};
@@ -31,7 +31,7 @@ public class DctTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		try{
-			CWD = System.getProperty("user.dir");
+			CWD = System.getProperty("user.home");
 			String absFileName = new File(CWD, testFileName).getPath();
 			System.err.println(absFileName);
 			br = new BufferedReader(new FileReader(absFileName));

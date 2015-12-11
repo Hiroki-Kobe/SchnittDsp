@@ -1,15 +1,12 @@
 #! coding: utf-8
 
 import lib.dsp_py as dsp_py
-import lib.wavchunk as wavchunk
 import sys
 from pylab import *
 
 ##########################
 # Input: wav file name for processing
 #########################
-
-mfcc_file = "test_mfcc.txt"
 
 # Parameter
 argv          = sys.argv
@@ -33,35 +30,25 @@ dsp.set_filename(wav_filename)         \
 
 
 # sample number of window
-win_samp_len = int((WINDOW_LEN / 1000.0) * SMP_RATE)
-assert(win_samp_len == 320)
+win_samp_no = int((WINDOW_LEN / 1000.0) * SMP_RATE)
+assert(win_samp_no == 320)
 
 # get integer
 int_samples = dsp.do_wav2int()
 # get preemphed integer
 tempSamples = [0] * (FFTN)
 tempSamples[:win_samp_len] = int_samples[:win_samp_len]
-
-
-##
 preemphed_samples = dsp.do_preemph(tempSamples)
 windowed_samples = dsp.do_windowning(preemphed_samples)
+
+### applying FFT
 fft_spec = dsp.do_fft(windowed_samples, plotting=False, saving=False)
-pow_spec = np.square(fft_spec)
-
-mfc = dsp.do_melFilterBank(pow_spec)
-mfccArr = dsp.do_mfcc(mfc)
-
-#chunk = wavchunk.WavChunk(windowed_samples, SMP_RATE)
-#mfc = chunk.do_mfcc2(windowed_samples, FFTN, CH)
-#mfccArr = chunk.do_dct()
 
 ### fft samples
-
-f = open(mfcc_file, "w")
-for i in mfccArr:
-    value = str(i) + "\n"
-    print value
+fft_samples_file = "fft_samples.txt"
+f = open(fft_samples_file, "w")
+for i in range(0, FFTN/2):
+    value = str(fft_spec[i]) + "\n"
     f.write(value)
 
 f.close()

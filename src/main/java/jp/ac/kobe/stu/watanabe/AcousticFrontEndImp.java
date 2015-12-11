@@ -183,10 +183,10 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 	 * @return double [] mfccArray
 	 * 
 	 */
-	private double[] doMfcc(double[] ampSamples) {
+	private double[] doMfcc(double[] powSamples) {
 		MelFilterBank melFilter = new MelFilterBank(FFT_N, HZ, MFCC_CH);
 		double[] mfc = new double[MFCC_CH];
-		mfc = melFilter.doMelFilterBank(ampSamples);
+		mfc = melFilter.doMelFilterBank(powSamples);
 
 		for (int c = 0; c < MFCC_CH; c++) {
 			// Log-transfer Sum of FilteredBanked Amplitude

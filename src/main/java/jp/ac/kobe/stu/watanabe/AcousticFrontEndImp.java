@@ -30,7 +30,6 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 
 	private boolean running = true;
 
-	private int totalShiftNum;
 	private int[] paddedSamples = null;
 	private int[] totalSamples = null;
 	private double[] preEmphSamp = null;
@@ -40,6 +39,8 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 
 	public static final DftNormalization STANDARD = DftNormalization.STANDARD;
 	public static final TransformType FORWARD = TransformType.FORWARD;
+
+	public int totalShiftNum;
 
 	/**
 	 * Setting Acoustic Front End parameters
@@ -67,8 +68,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 	 * Set integer samples of a wavfile Integer sample is 0-padded in order to
 	 * match the length of STFT(short-time Fourier transform )
 	 * 
-	 * @param int
-	 *            [] samples
+	 * @param int[] samples
 	 * 
 	 */
 	@Override
@@ -85,8 +85,8 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		/*
 		 * 0-padding totalSamples for matching STFT.
 		 */
-		int restOfSamples = (totalSamples.length - windowLen) % stepLength;
-		int paddedSampleLen = totalSamples.length + (stepLength - restOfSamples);
+		int remainderOfSamples = (totalSamples.length - windowLen) % stepLength; // reminder of samples if shifting is done without 0-padding
+		int paddedSampleLen = totalSamples.length + (stepLength - remainderOfSamples);
 		this.paddedSamples = new int[paddedSampleLen];
 		Arrays.fill(this.paddedSamples, 0);
 		System.arraycopy(totalSamples, 0, this.paddedSamples, 0, totalSamples.length);
@@ -94,7 +94,12 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		/*
 		 * Get Number of Times of Shifting Window.
 		 */
-		this.totalShiftNum = (paddedSampleLen - this.windowSampNum) / stepSampNum;
+		this.totalShiftNum = ((paddedSampleLen - this.windowSampNum) / stepSampNum)+1;
+	}
+	
+	@Override
+	public int getShiftNum(){
+		return this.totalShiftNum;
 	}
 
 	/**
@@ -124,8 +129,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 	/**
 	 * Applying pre-emphasis to samples
 	 * 
-	 * @param int
-	 *            [] samples
+	 * @param int[] samples
 	 * @return double [] pre-emphasized samples
 	 */
 	private double[] doPreEmph(int[] samples) {
@@ -139,8 +143,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 	/**
 	 * Applying Hanning Windowing
 	 * 
-	 * @param double
-	 *            [] pre-emphasied samples
+	 * @param double [] pre-emphasied samples
 	 * @return double [] windowed samples
 	 */
 	private double[] windowFrames(double[] preEmphedSamples) {
@@ -157,8 +160,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 	/**
 	 * Exexute FFT to samples
 	 * 
-	 * @param double
-	 *            [] indowedSamp
+	 * @param double[] indowedSamp
 	 * @return double [] fft
 	 */
 	private double[] doFft(double[] windowedSamp) {
@@ -178,8 +180,7 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 	/**
 	 * Returning MFCC
 	 * 
-	 * @param double
-	 *            [] powerAmplitudeAamples not {@code null}}
+	 * @param double [] powerAmplitudeAamples not {@code null}}
 	 * @return double [] mfccArray
 	 * 
 	 */
@@ -200,7 +201,8 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 
 		return mfccArr;
 	}
-
+	
+	
 	/**
 	 * Return FFT value of samples
 	 * 
@@ -235,5 +237,9 @@ public class AcousticFrontEndImp implements AcousticFrontEnd {
 		double[] mfccArr = doMfcc(powAmpArr);
 
 		return mfccArr;
+		
 	}
 }
+
+
+	

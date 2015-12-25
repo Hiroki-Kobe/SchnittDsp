@@ -21,7 +21,8 @@ public class AcousticFrontEndFactoryImp implements AcousticFrontEndFactory {
 	/**
 	 * set the number of fft
 	 * 
-	 * @param int the number of fft
+	 * @param int
+	 *            the number of fft
 	 */
 	@Override
 	public AcousticFrontEndFactory setFftN(int n) {
